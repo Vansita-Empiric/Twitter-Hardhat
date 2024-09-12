@@ -1,23 +1,60 @@
 import { PiUser, PiEyeSlashLight, PiNotepadLight } from "react-icons/pi";
 import { IoMailOutline } from "react-icons/io5";
 import { SlLock } from "react-icons/sl";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
-const SignUp = () => {
+const SignUp = ({ state, account }) => {
+  const { contract } = state;
+  const navigate = useNavigate();
+  const [name, setName] = useState();
+  const [desc, setDesc] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [confirmPassword, setConfirmPassword] = useState();
+
+  const registerUserFn = async (e) => {
+    e.preventDefault();
+    try {
+      if(password !== confirmPassword) {
+        alert("Password does not match");
+      }
+      
+      console.log("data---------",name,desc,email,password);      
+      // console.log("contract--------",contract);
+      
+
+      const register = await contract.registerUser(name, desc, email, password); 
+      // await register.wait();
+
+      // console.log("Register ------------", register);
+      
+      toast.success("User registered successfully");
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.reason);
+    }
+  };
   return (
     <div className="App">
       <div className="min-h-screen flex">
         {/* Left Side - Twitter Logo */}
-        <div className="flex-1 bg-dodger-blue flex items-center justify-center">
-          <div>
-            <img
-              src="/twitter_logo.png"
-              alt="Twitter Logo"
-              className="w-24"
-              loading="lazy"
-            />
-            <p className="text-white font-bold text-2xl">twitter</p>
+        <div className="flex-1 bg-dodger-blue">
+          <small className="text-[#373854]">Connected Account - {account}</small>
+          <div className="mt-80 flex items-center justify-center">
+            <div>
+              <img
+                src="/twitter_logo.png"
+                alt="Twitter Logo"
+                className="w-24"
+                loading="lazy"
+              />
+              <p className="text-white font-bold text-2xl">twitter</p>
+            </div>
           </div>
         </div>
+
         {/* Right Side - Sign up form */}
         <div className="flex-1 bg-white flex items-center justify-center flex-col w-full">
           <div className="w-full max-w-xl space-y-5 mb-7">
@@ -31,7 +68,7 @@ const SignUp = () => {
             </div>
           </div>
           <div className="w-full max-w-xl space-y-8">
-            <form className="w-full max-w-xl space-y-8">
+            <form className="w-full max-w-xl space-y-8" onSubmit={registerUserFn}>
               {/* Profile Picture */}
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 rounded-full bg-gray-300">
@@ -64,6 +101,10 @@ const SignUp = () => {
                     id="username"
                     name="username"
                     type="text"
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
+                    required
                     placeholder="Username"
                     className="block w-full mt-1 py-2.5 pl-9 pr-5 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-dodger-blue"
                   />
@@ -85,6 +126,10 @@ const SignUp = () => {
                     id="userdesc"
                     name="userdesc"
                     type="text"
+                    onChange={(e) => {
+                      setDesc(e.target.value);
+                    }}
+                    required
                     placeholder="User description"
                     className="block w-full mt-1 py-2.5 pl-9 pr-5 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-dodger-blue"
                   />
@@ -106,6 +151,10 @@ const SignUp = () => {
                     id="email"
                     name="email"
                     type="email"
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                    }}
+                    required
                     placeholder="Email"
                     className="block w-full mt-1 py-2.5 pl-9 pr-5 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-dodger-blue"
                   />
@@ -127,6 +176,10 @@ const SignUp = () => {
                     id="password"
                     name="password"
                     type="password"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                    required
                     placeholder="Password"
                     className="block w-full mt-1 py-2.5 pl-9 pr-10 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-dodger-blue"
                   />
@@ -155,6 +208,11 @@ const SignUp = () => {
                     id="confirmPassword"
                     name="confirmPassword"
                     type="password"
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      
+                    }}
+                    required
                     placeholder="Confirm Password"
                     className="block w-full mt-1 py-2.5 pl-9 pr-10 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-dodger-blue"
                   />
